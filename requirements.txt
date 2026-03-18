@@ -6,5 +6,5 @@ twilio
 googlemaps
 python-dotenv
 SpeechRecognition
-pyaudio          # microphone access - important!
-vosk             # for fully offline option (recommended)
+pyaudio
+vosk
