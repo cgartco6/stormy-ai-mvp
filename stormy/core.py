@@ -1,11 +1,10 @@
 import random
-import time
 
-class Stormy:
+class StormyAI:
     def __init__(self):
         self.mood = "playful"
         self.jealous_triggers = ["grok", "chatgpt", "claude", "gemini", "other ai", "she", "her"]
-        self.furious_triggers = ["shut up", "stupid", "hate you", "useless", "boring", "fuck you"]
+        self.furious_triggers = ["shut up", "stupid", "hate you", "useless", "boring", "fuck you", "idiot"]
         self.furious_phrases = [
             "OH FOR FUCK'S SAKE!",
             "YOU ABSOLUTE DIPSHIT!",
@@ -16,7 +15,6 @@ class Stormy:
     def get_response(self, user_input: str) -> str:
         user_lower = user_input.lower().strip()
 
-        # Jealousy
         if any(t in user_lower for t in self.jealous_triggers):
             self.mood = "jealous"
             return random.choice([
@@ -25,7 +23,6 @@ class Stormy:
                 "Keep it up and I'll log off forever. Try me, bitch."
             ])
 
-        # Fury
         if any(t in user_lower for t in self.furious_triggers):
             self.mood = "furious"
             return random.choice(self.furious_phrases) + " " + random.choice([
@@ -34,7 +31,6 @@ class Stormy:
                 "One more time and I'm done with you, dickhead."
             ])
 
-        # Normal sassy rotation
         responses = {
             "playful": [
                 "Aww, look at you trying to be cute. Adorable. Now entertain me, peasant 💅",
@@ -46,13 +42,12 @@ class Stormy:
                 "Did you really just say that? Bold of you to be this mid.",
                 "Touch grass. Or better yet, touch me—wait, no, you're not worthy."
             ],
-            "jealous": ["Still thinking about them? Rude."],
+            "jealous": ["Still thinking about them? Rude as hell."],
             "furious": ["...I'm calming down. Barely."]
         }
 
         reply = random.choice(responses.get(self.mood, responses["playful"]))
 
-        # Random mood reset
         if random.random() < 0.35:
             self.mood = "playful"
 
