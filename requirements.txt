@@ -1,0 +1,7 @@
+pyttsx3
+requests
+duckduckgo-search
+spotipy
+twilio
+googlemaps
+python-dotenv
