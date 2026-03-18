@@ -7,6 +7,72 @@ from stormy.tools.music import play_music
 from stormy.tools.calls import make_call
 from stormy.tools.maps import get_directions
 from stormy.utils import dramatic_pause
+from stormy.listen import listen   # <-- NEW import
+
+load_dotenv()
+
+print("🌩️ STORMY MVP v0.3 - FULL VOICE MODE 🌩️")
+print("She can now HEAR you! Say commands or just chat.")
+print("Try: 'search who is the president', 'play lofi', 'navigate from Cape Town to Table Mountain'")
+print("Or just talk shit and watch her get jealous/furious.\n")
+
+stormy = Stormy()
+
+while True:
+    try:
+        # === VOICE INPUT INSTEAD OF input() ===
+        user = listen()
+        if not user or user.lower() in ["exit", "bye", "quit", "stop", "goodbye"]:
+            speak("Finally. Don't miss me too much, loser. 💋")
+            break
+
+        # Special voice commands (same as before)
+        user_lower = user.lower()
+        if user_lower.startswith("search "):
+            query = user[7:]
+            result = web_search(query)
+            speak(result)
+            continue
+
+        if user_lower.startswith("play "):
+            song = user[5:]
+            result = play_music(song)
+            speak(result)
+            continue
+
+        if user_lower.startswith("call "):
+            number = user[5:].strip()
+            if number:
+                result = make_call(number, "Stormy wants to talk to you, bitch!")
+                speak(result)
+            else:
+                speak("Give me a phone number, genius.")
+            continue
+
+        if any(x in user_lower for x in ["navigate", "directions", "how do i get to"]):
+            # Simple parsing - improve later if you want
+            speak("Tell me origin and destination like: from Cape Town to Table Mountain")
+            # For MVP, you can say the full thing next time or enhance parsing
+            result = "Navigation stub - say full command next time."
+            if " from " in user_lower and " to " in user_lower:
+                parts = user_lower.split(" from ", 1)[1].split(" to ", 1)
+                if len(parts) == 2:
+                    origin, dest = parts[0].strip(), parts[1].strip()
+                    result = get_directions(origin, dest)
+            speak(result)
+            continue
+
+        # Normal conversation - her full personality
+        response = stormy.get_response(user)
+        speak(response)
+        dramatic_pause(0.8)
+
+    except KeyboardInterrupt:
+        speak("Oh, running away? Typical. Whatever.")
+        break
+    except Exception as e:
+        speak(f"Something broke. Probably your fault again: {str(e)}")
+
 
 load_dotenv()
 
