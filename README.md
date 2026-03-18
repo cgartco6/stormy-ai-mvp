@@ -1,3 +1,12 @@
+## 🌩️ WEB VERSION (instant)
+Just open `web/index.html` in Chrome.
+
+- Your real photos (standing + car)
+- Animated lightning + rain
+- Real voice input + output
+- Facial expressions (shakes when furious, colour shift when jealous)
+- Full personality (sarcastic, mean, jealous, swears when furious)
+  
 # Stormy-ai-mvp 🌩️
 
 Sarcastic, jealous, mean, playful voice AI that swears when furious (but never harmful).
