@@ -1,0 +1,7 @@
+#bg-photo {
+  background-image: url('/assets/stormy-standing.jpg');
+}
+
+#bg-photo.car {
+  background-image: url('/assets/stormy-car.jpg');
+}
