@@ -1,0 +1,23 @@
+/* This makes Stormy-standing.jpg your full-page background */
+body {
+  background-image: url('Stormy-standing.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center; /* Centers vertically */
+}
+
+/* This creates the 'Nested' chat box on the middle-left */
+.chat-container {
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+  backdrop-filter: blur(10px);    /* Modern frosted-glass effect */
+  width: 350px;
+  height: 500px;
+  margin-left: 50px;             /* Pushes it to the left */
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 20px;
+}
