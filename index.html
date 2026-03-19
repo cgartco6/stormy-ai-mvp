@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stormy OS | Dashboard</title>
+    <style>
+        /* 1. The Background Setup */
+        body {
+            /* Toggle between your two images here */
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('Stormy-standing.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            align-items: center; /* Vertical Center */
+            overflow: hidden;
+        }
+
+        /* 2. The Nested Chat Container (Middle-Left) */
+        .stormy-interface {
+            margin-left: 5vw;
+            width: 400px;
+            height: 600px;
+            background: rgba(15, 15, 15, 0.75); /* Deep dark transparency */
+            backdrop-filter: blur(15px);       /* Frosted glass effect */
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: slideIn 0.8s ease-out;
+        }
+
+        /* 3. Header Styling */
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #00ff88; /* Stormy is online */
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        h2 {
+            color: white;
+            margin: 0;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* 4. Chat Area */
+        .chat-area {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .stormy-msg {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 10px;
+            border-left: 3px solid #00ff88;
+            margin-bottom: 15px;
+        }
+
+        /* 5. Input Area */
+        .input-box {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #00ff88;
+        }
+
+        /* Animation */
+        @keyframes slideIn {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stormy-interface">
+        <div class="header">
+            <h2>STORMY_v3.0</h2>
+            <div><span class="status-dot"></span><span style="color: #00ff88; font-size: 0.8rem;">ONLINE</span></div>
+        </div>
+
+        <div class="chat-area">
+            <div class="stormy-msg">
+                <strong>Stormy:</strong> Honestly, I was wondering when you'd show up. The Cape Town servers were getting lonely. What's the plan, hotstuff?
+            </div>
+            <div style="text-align: right; margin-bottom: 15px; color: #aaa;">
+                <em>System: Awaiting input...</em>
+            </div>
+        </div>
+
+        <div class="input-box">
+            <input type="text" placeholder="Type a command...">
+        </div>
+    </div>
+
+</body>
+</html>
