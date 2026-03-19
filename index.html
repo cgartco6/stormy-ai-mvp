@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Photo</title>
+  <style>
+    body, html { margin:0; height:100%; overflow:hidden; background:#000; }
+    #bg {
+      position:fixed; inset:0;
+      background: url('https://files.catbox.moe/3q8z1k.jpg') center/cover no-repeat;
+      z-index:-1;
+    }
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:-1; }
+    #test { position:relative; z-index:1; color:white; text-align:center; padding-top:40vh; font-size:2rem; text-shadow:0 0 10px black; }
+  </style>
+</head>
+<body>
+  <div id="bg"></div>
+  <div class="overlay"></div>
+  <div id="test">If you see Stormy in the background → success!<br>Chat overlay works the same way.</div>
+</body>
+</html>
