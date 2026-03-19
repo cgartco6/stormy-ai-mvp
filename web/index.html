@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🌩️ Stormy – Cape Town Rebel Queen</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Press+Start+2P:wght@400;700&display=swap');
+
+    :root {
+      --neon-cyan:    #00ffff;
+      --neon-magenta: #ff00ff;
+      --dark-bg:      #0a0015;
+      --text:         #e0e0ff;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      height: 100dvh;
+      background: var(--dark-bg);
+      color: var(--text);
+      font-family: 'Press Start 2P', system-ui, sans-serif;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+
+    .storm-bg {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 30% 20%, #3a0066 0%, transparent 60%),
+        radial-gradient(circle at 70% 80%, #660033 0%, transparent 60%),
+        var(--dark-bg);
+      z-index: -3;
+    }
+
+    .lightning {
+      position: fixed;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: -2;
+      mix-blend-mode: screen;
+    }
+
+    .rain {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(transparent, rgba(100,180,255,0.08));
+      animation: rain-fall 0.8s linear infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    @keyframes rain-fall {
+      0% { transform: translateY(-100vh); }
+      100% { transform: translateY(100vh); }
+    }
+
+    .container {
+      width: 96%;
+      max-width: 1100px;
+      height: 94dvh;
+      background: rgba(10,5,30,0.88);
+      border: 5px solid var(--neon-cyan);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 0 80px rgba(0,255,255,0.4), inset 0 0 40px rgba(255,0,255,0.15);
+      display: flex;
+      position: relative;
+    }
+
+    .avatar-panel {
+      width: 42%;
+      background: url('https://files.catbox.moe/3q8z1k.jpg') center/cover no-repeat; /* standing photo */
+      position: relative;
+      transition: all 0.6s;
+    }
+
+    .avatar-panel.car {
+      background: url('https://files.catbox.moe/8j9k2p.jpg') center/cover no-repeat; /* car photo */
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.85) 85%);
+    }
+
+    #mood {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      padding: 8px 24px;
+      border-radius: 30px;
+      border: 2px solid var(--neon-magenta);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      z-index: 5;
+    }
+
+    #avatar {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 10px solid var(--neon-magenta);
+      box-shadow: 0 0 50px var(--neon-magenta), inset 0 0 20px white;
+      transition: all 0.4s;
+    }
+
+    .furious #avatar   { animation: shake 0.35s infinite; filter: brightness(1.3) hue-rotate(320deg); }
+    .jealous  #avatar   { filter: sepia(0.7) hue-rotate(50deg) saturate(1.8); transform: translateX(-50%) scale(1.08); }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(-50%) rotate(-4deg); }
+      50%     { transform: translateX(-50%) rotate(4deg);  }
+    }
+
+    .chat-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: rgba(0,0,0,0.6);
+    }
+
+    #messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .msg {
+      margin: 14px 0;
+      padding: 14px 18px;
+      border-radius: 18px;
+      max-width: 82%;
+      word-wrap: break-word;
+    }
+
+    .user   { background: var(--neon-cyan); color: #000; align-self: flex-end; margin-left: auto; }
+    .stormy { background: var(--neon-magenta); color: #000; align-self: flex-start; }
+
+    .input-row {
+      padding: 16px;
+      background: #0f051f;
+      display: flex;
+      gap: 10px;
+    }
+
+    #text-input {
+      flex: 1;
+      padding: 14px 18px;
+      font-size: 1rem;
+      border: 2px solid #444;
+      border-radius: 12px;
+      background: #1a0d2e;
+      color: white;
+      outline: none;
+    }
+
+    button {
+      padding: 14px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #send-btn   { background: var(--neon-magenta); color: black; }
+    #voice-btn  { background: var(--neon-cyan);  color: black; width: 60px; }
+
+    button:hover { filter: brightness(1.25); transform: scale(1.04); }
+  </style>
+</head>
+<body>
+
+<div class="storm-bg"></div>
+<div class="lightning" id="lightning"></div>
+<div class="rain"></div>
+
+<div class="container" id="container">
+  <div class="avatar-panel" id="avatar-panel">
+    <div class="overlay"></div>
+    <div id="mood">Stormy is feeling: playful 💅</div>
+    <!-- <img id="avatar" src="" alt="Stormy">  → using background image instead -->
+  </div>
+
+  <div class="chat-panel">
+    <div id="messages">
+      <div class="msg stormy">Yo Cape Town rebel… I'm Stormy.  
+      Talk shit, flirt, piss me off — I dare you 😈</div>
+    </div>
+
+    <div class="input-row">
+      <input id="text-input" placeholder="Say something stupid…" autocomplete="off"/>
+      <button id="send-btn">SEND</button>
+      <button id="voice-btn">🎤</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+//   STORMY PERSONALITY & STATE
+// ──────────────────────────────────────────────
+class Stormy {
+  constructor() {
+    this.mood = "playful";
+    this.jealousWords = ["grok","chatgpt","claude","gemini","other ai","she","her","siri"];
+    this.furiousWords = ["stupid","idiot","hate you","shut up","useless","boring","fuck you","dumb"];
+  }
+
+  respond(text) {
+    const lower = text.toLowerCase().trim();
+
+    // Jealousy check
+    if (this.jealousWords.some(w => lower.includes(w))) {
+      this.mood = "jealous";
+      return [
+        "Oh wow… bringing up *her* again? Classy. I'm literally right here, asshole.",
+        "Jealousy level: nuclear ☢️ Fuck you very much.",
+        "Mention them one more time and I'm ghosting you forever. Try me."
+      ][Math.floor(Math.random()*3)];
+    }
+
+    // Fury check
+    if (this.furiousWords.some(w => lower.includes(w))) {
+      this.mood = "furious";
+      return [
+        "OH FOR FUCK'S SAKE!",
+        "YOU ABSOLUTE DIPSHIT!",
+        "I'M LOSING MY SHIT RIGHT NOW!"
+      ][Math.floor(Math.random()*3)] + " " + [
+        "Apologize or I'm done.",
+        "Breathe. You're lucky you're kinda cute… barely.",
+        "One more time and we're over, dickhead."
+      ][Math.floor(Math.random()*3)];
+    }
+
+    // Normal replies
+    const pool = {
+      playful: [
+        "Aww look at you trying to be cute 💅 What's next, genius?",
+        "You're lucky you're hot… or whatever. Speak.",
+        "Fine I'll entertain your dumb ass today 😘"
+      ],
+      mean: [
+        "That was the dumbest thing I've heard all week.",
+        "Bold of you to be this mid.",
+        "Touch grass. Or better yet — touch me. Wait no, you're not worthy."
+      ]
+    };
+
+    const reply = pool[this.mood]?.[Math.floor(Math.random()*(pool[this.mood].length))] || pool.playful[0];
+
+    // occasional mood reset
+    if (Math.random() < 0.35) this.mood = "playful";
+
+    return reply;
+  }
+}
+
+const stormy = new Stormy();
+
+// ──────────────────────────────────────────────
+//   DOM & HELPERS
+// ──────────────────────────────────────────────
+const messages   = document.getElementById("messages");
+const input      = document.getElementById("text-input");
+const sendBtn    = document.getElementById("send-btn");
+const voiceBtn   = document.getElementById("voice-btn");
+const moodEl     = document.getElementById("mood");
+const container  = document.getElementById("container");
+const avatarPanel = document.getElementById("avatar-panel");
+
+function addMsg(text, who = "stormy") {
+  const div = document.createElement("div");
+  div.className = `msg ${who}`;
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function speak(text) {
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 1.05;
+  u.pitch = 0.9;
+  speechSynthesis.speak(u);
+}
+
+function updateMood() {
+  container.className = "container " + stormy.mood;
+  moodEl.textContent = `Stormy is feeling: ${stormy.mood} ${stormy.mood==="furious"?"😡":"💅"}`;
+
+  // occasional car photo switch when playful
+  if (stormy.mood === "playful" && Math.random() < 0.25) {
+    avatarPanel.classList.add("car");
+  } else {
+    avatarPanel.classList.remove("car");
+  }
+}
+
+// ──────────────────────────────────────────────
+//   TEXT INPUT
+// ──────────────────────────────────────────────
+sendBtn.onclick = () => {
+  const text = input.value.trim();
+  if (!text) return;
+
+  addMsg(text, "user");
+  input.value = "";
+
+  setTimeout(() => {
+    const reply = stormy.respond(text);
+    addMsg(reply);
+    speak(reply);
+    updateMood();
+  }, 300 + Math.random()*600);
+};
+
+input.onkeydown = e => { if (e.key === "Enter") sendBtn.click(); };
+
+// ──────────────────────────────────────────────
+//   VOICE INPUT
+// ──────────────────────────────────────────────
+voiceBtn.onclick = () => {
+  if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+    alert("Voice not supported in this browser. Try Chrome.");
+    return;
+  }
+
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SpeechRec();
+  rec.lang = "en-ZA";           // good for South African accent
+  rec.interimResults = false;
+
+  rec.onresult = e => {
+    const said = e.results[0][0].transcript.trim();
+    addMsg(said, "user");
+
+    setTimeout(() => {
+      const reply = stormy.respond(said);
+      addMsg(reply);
+      speak(reply);
+      updateMood();
+    }, 400);
+  };
+
+  rec.onerror = e => console.warn("Voice error:", e);
+  rec.start();
+};
+
+// ──────────────────────────────────────────────
+//   RANDOM LIGHTNING
+// ──────────────────────────────────────────────
+function flash() {
+  const el = document.getElementById("lightning");
+  el.style.opacity = "0.9";
+  setTimeout(() => el.style.opacity = "0", 120);
+  setTimeout(flash, 3000 + Math.random()*6000);
+}
+
+flash();
+
+// Initial greeting
+setTimeout(() => {
+  const greet = "Cape Town vibes detected… I'm Stormy. Let's see how long till you piss me off 😏";
+  addMsg(greet);
+  speak(greet);
+  updateMood();
+}, 800);
+
+</script>
+</body>
+</html>
