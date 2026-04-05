@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🌩️ Stormy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P:wght@400;700&display=swap');
+    :root { --cyan: #00ffff; --magenta: #ff00ff; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; width:100%; overflow:hidden; background:#000; font-family:'Press Start 2P', sans-serif; color:#fff; }
+    
+    #bg {
+      position:fixed; inset:0;
+      background: url('https://files.catbox.moe/3q8z1k.jpg') center/cover no-repeat !important;
+      z-index:-2;
+    }
+    #bg.car { background-image: url('https://files.catbox.moe/8j9k2p.jpg') !important; }
+    
+    #overlay { position:fixed; inset:0; background:rgba(10,5,30,0.45); z-index:-1; }
+    
+    .lightning { position:fixed; inset:0; background:white; opacity:0; mix-blend-mode:screen; z-index:-1; pointer-events:none; }
+    
+    #mood {
+      position:fixed; top:0; left:0; right:0; padding:16px; text-align:center;
+      background:rgba(0,0,0,0.75); border-bottom:5px solid var(--magenta); z-index:20;
+      font-size:1.05rem; text-shadow:0 0 10px var(--magenta);
+    }
+    
+    #chat { flex:1; display:flex; flex-direction:column; padding:90px 16px 16px; position:relative; z-index:10; }
+    #messages { flex:1; overflow-y:auto; padding-bottom:30px; }
+    
+    .msg {
+      margin:14px 0; padding:16px 20px; border-radius:18px; max-width:90%; font-size:0.98rem; line-height:1.5;
+      backdrop-filter:blur(8px);
+    }
+    .user { background:rgba(0,255,255,0.25); border:2px solid var(--cyan); margin-left:auto; }
+    .stormy { background:rgba(255,0,255,0.28); border:2px solid var(--magenta); }
+    
+    .input-row {
+      display:flex; gap:12px; padding:16px; background:rgba(0,0,0,0.7); border-top:4px solid #333;
+    }
+    #input { flex:1; padding:16px; border:3px solid #777; border-radius:14px; background:rgba(30,20,50,0.85); color:white; font-size:1.05rem; outline:none; }
+    button { padding:16px 26px; border:none; border-radius:14px; font-weight:bold; cursor:pointer; font-size:1rem; }
+    #send-btn { background:var(--magenta); color:black; }
+    #voice-btn { background:var(--cyan); color:black; width:66px; font-size:1.4rem; }
+  </style>
+</head>
+<body>
+
+<div id="bg"></div>
+<div id="overlay"></div>
+<div class="lightning" id="lightning"></div>
+
+<div id="mood">Stormy is feeling: PLAYFUL 💅⚡</div>
+
+<div id="chat">
+  <div id="messages">
+    <div class="msg stormy">Cape Town rebel online. I'm Stormy.  
+    Type something — let's see how long till I roast you 😈</div>
+  </div>
+  
+  <div class="input-row">
+    <input id="input" placeholder="Type here (sound coming soon)..." autocomplete="off">
+    <button id="send-btn">SEND</button>
+    <button id="voice-btn">🎤</button>
+  </div>
+</div>
+
+<script>
+console.log("Stormy loaded – photo should be visible");
+
+const messages = document.getElementById("messages");
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("send-btn");
+const voiceBtn = document.getElementById("voice-btn");
+const moodEl = document.getElementById("mood");
+const bg = document.getElementById("bg");
+
+function addMsg(text, who) {
+  const div = document.createElement("div");
+  div.className = `msg ${who}`;
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+let currentMood = "playful";
+
+function updateMood(reply) {
+  const lower = reply.toLowerCase();
+  if (lower.includes("fuck") || lower.includes("shit")) currentMood = "furious";
+  else if (lower.includes("jealous") || lower.includes("her")) currentMood = "jealous";
+  else if (Math.random() < 0.4) currentMood = "playful";
+  
+  moodEl.textContent = `Stormy is feeling: ${currentMood.toUpperCase()} ${currentMood==="furious"?"😡🔥":"💅⚡"}`;
+  if (currentMood === "playful" && Math.random() < 0.3) bg.classList.add("car");
+  else bg.classList.remove("car");
+}
+
+function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
+  addMsg(text, "user");
+  input.value = "";
+  
+  let reply = "Ja? That's cute. Keep going, hotshot.";
+  const lower = text.toLowerCase();
+  if (lower.includes("stupid") || lower.includes("idiot") || lower.includes("hate")) {
+    reply = "OH FOR FUCK'S SAKE! Apologize right now, dickhead.";
+  } else if (lower.includes("grok") || lower.includes("chatgpt") || lower.includes("claude")) {
+    reply = "Bringing up *her* again? Fuck you. I'm right here.";
+  }
+  
+  setTimeout(() => {
+    addMsg(reply, "stormy");
+    updateMood(reply);
+    console.log("Stormy replied:", reply);
+  }, 500);
+}
+
+sendBtn.addEventListener("click", sendMessage);
+input.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+
+voiceBtn.addEventListener("click", () => {
+  alert("Voice input ready — but sound output is limited on Android Chrome right now. Type instead for full experience.");
+  // Voice recognition still works for input
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRec) {
+    const rec = new SpeechRec();
+    rec.lang = "en-ZA";
+    rec.onresult = e => {
+      const said = e.results[0][0].transcript.trim();
+      addMsg(said, "user");
+      sendMessage(); // reuse send logic
+    };
+    rec.start();
+  }
+});
+
+// Lightning
+function flash() {
+  const l = document.getElementById("lightning");
+  l.style.opacity = "0.75";
+  setTimeout(() => l.style.opacity = "0", 160);
+  setTimeout(flash, 3200 + Math.random()*4800);
+}
+flash();
+
+// Start greeting
+setTimeout(() => {
+  const greet = "Stormy here. Photo loaded. Type to chat — sound coming in next update.";
+  addMsg(greet, "stormy");
+  updateMood(greet);
+}, 800);
+
+console.log("Stormy ready — photo + chat should work now");
+</script>
+</body>
+</html>
