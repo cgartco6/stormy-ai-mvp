@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🌩️ Stormy V3</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P:wght@400;700&display=swap');
+    :root { --cyan: #00ffff; --magenta: #ff00ff; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; width:100%; overflow:hidden; background:#000; font-family:'Press Start 2P', sans-serif; color:#f0f0ff; }
+    
+    #bg {
+      position:fixed; inset:0;
+      background: url('https://files.catbox.moe/3q8z1k.jpg') center/cover no-repeat;
+      z-index:-2;
+    }
+    #bg.car { background-image: url('https://files.catbox.moe/8j9k2p.jpg'); }
+    
+    #overlay { position:fixed; inset:0; background:rgba(10,5,30,0.52); z-index:-1; }
+    
+    .lightning { position:fixed; inset:0; background:white; opacity:0; mix-blend-mode:screen; z-index:-1; pointer-events:none; }
+    
+    #mood {
+      position:fixed; top:0; left:0; right:0; padding:14px; text-align:center;
+      background:rgba(0,0,0,0.75); border-bottom:4px solid var(--magenta); z-index:20;
+      font-size:0.95rem; text-shadow:0 0 8px var(--magenta);
+    }
+    
+    #chat { flex:1; display:flex; flex-direction:column; padding:80px 16px 16px; position:relative; z-index:10; }
+    #messages { flex:1; overflow-y:auto; padding-bottom:20px; }
+    
+    .msg {
+      margin:12px 0; padding:14px 18px; border-radius:16px; max-width:88%; font-size:0.9rem; line-height:1.45;
+      backdrop-filter:blur(6px);
+    }
+    .user { background:rgba(0,255,255,0.22); border:1px solid var(--cyan); margin-left:auto; }
+    .stormy { background:rgba(255,0,255,0.25); border:1px solid var(--magenta); }
+    
+    .input-row {
+      display:flex; gap:10px; padding:14px; background:rgba(0,0,0,0.6); border-top:3px solid #444;
+    }
+    #input { flex:1; padding:14px; border:2px solid #666; border-radius:12px; background:rgba(30,20,50,0.8); color:white; outline:none; font-size:1rem; }
+    button { padding:14px 22px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; }
+    #send-btn { background:var(--magenta); color:black; }
+    #voice-btn { background:var(--cyan); color:black; width:60px; font-size:1.3rem; }
+  </style>
+</head>
+<body>
+
+<div id="bg"></div>
+<div id="overlay"></div>
+<div class="lightning" id="lightning"></div>
+
+<div id="mood">Stormy is feeling: PLAYFUL 💅⚡</div>
+
+<div id="chat">
+  <div id="messages">
+    <div class="msg stormy">Cape Town storm online... I'm Stormy.  
+    Type or speak something. Don't be boring.</div>
+  </div>
+  
+  <div class="input-row">
+    <input id="input" placeholder="Talk shit to Stormy..." autocomplete="off">
+    <button id="send-btn">SEND</button>
+    <button id="voice-btn">🎤</button>
+  </div>
+</div>
+
+<script>
+console.log("%cStormy loaded – check console for logs", "color:#ff00ff; font-size:14px");
+
+const messages = document.getElementById("messages");
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("send-btn");
+const voiceBtn = document.getElementById("voice-btn");
+const moodEl = document.getElementById("mood");
+const bg = document.getElementById("bg");
+
+function addMsg(text, who) {
+  console.log(`Adding ${who} message: ${text}`);
+  const div = document.createElement("div");
+  div.className = `msg ${who}`;
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function speak(text) {
+  console.log("Speaking:", text);
+  if ('speechSynthesis' in window) {
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 1.28; u.pitch = 0.82; u.volume = 0.95;
+    speechSynthesis.speak(u);
+  } else {
+    console.warn("Speech not supported");
+  }
+}
+
+let stormyMood = "playful";
+
+function updateMood(reply) {
+  const lowerReply = reply.toLowerCase();
+  if (lowerReply.includes("fuck") || lowerReply.includes("shit")) stormyMood = "furious";
+  else if (lowerReply.includes("jealous") || lowerReply.includes("her")) stormyMood = "jealous";
+  else if (Math.random() < 0.4) stormyMood = "playful";
+  
+  moodEl.textContent = `Stormy is feeling: ${stormyMood.toUpperCase()} ${stormyMood==="furious" ? "😡🔥" : "💅⚡"}`;
+  if (stormyMood === "playful" && Math.random() < 0.25) bg.classList.add("car");
+  else bg.classList.remove("car");
+}
+
+// Send function
+function send() {
+  const text = input.value.trim();
+  if (!text) return;
+  addMsg(text, "user");
+  input.value = "";
+  
+  // Simple local personality (no backend yet)
+  let reply = "Ja? That's cute. Keep going, hotshot.";
+  const lower = text.toLowerCase();
+  if (["grok","chatgpt","claude","gemini","siri"].some(w => lower.includes(w))) {
+    reply = "Bringing up *her* again? Fuck you. I'm right here.";
+  } else if (["stupid","idiot","hate you","shut up","useless"].some(w => lower.includes(w))) {
+    reply = "OH FOR FUCK'S SAKE! Apologize right now, dickhead.";
+  }
+  
+  setTimeout(() => {
+    addMsg(reply, "stormy");
+    speak(reply);
+    updateMood(reply);
+  }, 500);
+}
+
+sendBtn.addEventListener("click", send);
+input.addEventListener("keydown", e => { if (e.key === "Enter") send(); });
+
+voiceBtn.addEventListener("click", () => {
+  console.log("Voice button pressed");
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    alert("Voice not supported on this browser. Type instead.");
+    return;
+  }
+  const rec = new SpeechRec();
+  rec.lang = "en-ZA";
+  rec.onresult = e => {
+    const said = e.results[0][0].transcript.trim();
+    addMsg(said, "user");
+    let reply = "You said that? Bold. What's next?";
+    if (said.toLowerCase().includes("stupid")) reply = "OH FOR FUCK'S SAKE!";
+    setTimeout(() => {
+      addMsg(reply, "stormy");
+      speak(reply);
+      updateMood(reply);
+    }, 600);
+  };
+  rec.start();
+});
+
+// Lightning
+function flash() {
+  const l = document.getElementById("lightning");
+  l.style.opacity = "0.75";
+  setTimeout(() => l.style.opacity = "0", 140);
+  setTimeout(flash, 3500 + Math.random()*4500);
+}
+flash();
+
+// Start
+setTimeout(() => {
+  addMsg("Stormy here. Cape Town rebel mode activated. Don't waste my time.", "stormy");
+  speak("Stormy here. Cape Town rebel mode activated.");
+}, 800);
+
+console.log("Stormy fully initialized – try typing and sending now");
+</script>
+</body>
+</html>
